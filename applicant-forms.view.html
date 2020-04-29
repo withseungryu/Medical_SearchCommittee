@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Minerva</title>
+
+    <!-- Used with Bootstrap 4 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+
+    <!--Donwloaded files and stored in resource folder -->
+    <!--    jQuery first, then Popper.js, then Bootstrap JS -->
+
+    <!-- JQuery needed for  Bootstrap 4 and Angular -->
+    <script src="lib/jquery/dist/jquery.js"></script>
+
+    <!-- Popper needed for Bootstrap 4 - Bootstrap 4 requires UMD version of popper.js -->
+    <script src="lib/popper.js/dist/umd/popper.js"></script>
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css">
+    <script src="lib/bootstrap/dist/js/bootstrap.js"></script>
+
+    <!-- Angular 1.7.5 -->
+    <script type="text/javascript" src="lib/angular/angular.js"></script>
+    <script type="text/javascript" src="lib/angular-route/angular-route.min.js"></script>
+
+    <!-- iconic icons -->
+    <link href="lib/open-iconic/font/css/open-iconic-bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/site.css">
+
+
+    <script src="main.config.js"></script>
+
+    <script src="applicant.module.js"></script>
+
+    <script src="modules/search/search.module.js"></script>
+    <script src="modules/search/find-cadet/find-cadet.module.js"></script>
+    <script src="modules/search/find-cadet/find-cadet.component.js"></script>
+    <script src="modules/search/find-cadet/find-cadet-panel.component.js"></script>
+    <script src="modules/search/find-applicant/find-applicant.module.js"></script>
+    <script src="modules/search/find-applicant/find-applicant.component.js"></script>
+    <script src="modules/search/find-applicant/find-applicant-panel.component.js"></script>
+
+    <script src="applicant-forms.controller.js"></script>
+
+
+
+</head>
+
+<body>
+
+<h1>Forms</h1>
+
+<div class="row">
+    <div class="col-2">
+        <button class="myButton" onclick="window.location.href = './applicant-summary-table.view.html'">Summary Table</button>
+    </div>
+    <div class="col-2">
+        <button class="myButton" onclick="window.location.href = './applicant-email.view.html'">Email Applicants</button>
+    </div>
+    <div class="col-2">
+        <button class="myButtonActive" onclick="window.location.href = './applicant-forms.view.html'">Email Forms</button>
+    </div>
+</div>
+
+</br>
+
+<div ng-app="myApplicant" ng-controller="ApplicantFormController">
+
+    <div class="container-fluid" style="margin-top:0">
+        <div class="row">
+            <div class="col-2 "  id="formListColumn">
+                <table class="table minerva-table">
+                    <thead>
+                    <tr>
+                        <th>Forms</th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <span>
+                            <button class="btn btnCreate"
+                                    ng-hide="editMode"
+                                    ng-click="createRecord()">Add</button>
+
+                            </span>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="form in dataList track by $index"
+                        ng-class="getStyle($index)"
+
+                    >
+                        <td  ng-click="selectForm($index)"
+                             ng-disabled="editMode">{{form.FormName}}</td>
+                    </tr>
+                    </tbody>
+
+                </table>
+                <div><a href="../medical/applicant-email.view.html">
+                    <button class=" btn btn-success ">Back</button>
+                </a></div>
+            </div>
+
+            <div class="col" id="formPreviewColumn" ng-class="alert-info">
+                <div>
+                    <table class="table minerva-table">
+                        <thead>
+                        <tr>
+                            <th>
+                                <button class="btn btnEdit"
+                                        ng-hide="editMode"  ng-click="enableEdits()">Edit</button>
+                                <button type="button" class="btn btnSave"
+                                        ng-show="editMode" ng-click="saveEdits()">Save</button>
+                                <button type="button"
+                                        ng-show="editMode" class="btn btnDelete" ng-click="deleteRecord()">Delete</button>
+                                <button type="button"
+                                        ng-show="editMode" class="btn btnCancel" ng-click="cancelEdits()">Cancel</button>
+
+
+
+                            </th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="form-group" ng-class="getCardStyle()">
+                    <label for="formName">Form Name</label>
+                    <input type="text"
+                           ng-model="formPreview.FormName"
+                           ng-disabled="!editMode"
+                           class="form-control"
+                           id="formName"/>
+                </div>
+
+                <div class="form-group" ng-class="getCardStyle()">
+                    <label for="formText">Form Text</label>
+                    <textarea ng-model="formPreview.FormText"
+                              rows="8"
+                              id="formText"
+                              class="form-control"
+                              ng-disabled="!editMode"
+                              ng-class="getCardStyle()"
+                    ></textarea>
+                </div>
+
+
+                <!-- ==============Form Attachment Part ==================-->
+
+                <!-- Table for FormAttachment -->
+                <div style="overflow-y:auto;">
+                    <table class="tb1 table minerva-table bg-light table-hover">
+                        <thead>
+                        <tr class="tr1">
+                            <th>SourceFileName</th>
+                            <th>Note</th>
+
+                            <th ng-hide="!attachMode">function</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="form in list">
+                            <td >{{form.SourceFileName}}</td>
+                            <td>{{form.Note}}</td>
+
+                            <td ng-hide="!attachMode">
+                                <button type="button" class="btn btnDelete" ng-click="deleteForms(form)"></button>
+                                <button type="button" class="btn btnEdit" ng-click="disPlay(form)">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div ng-hide ="editMode">
+
+                        <button type="button"
+                                class="btn" ng-click="createAttach()">File Attach Mode</button></div>
+
+                </div>
+                <!-- Form for formAttachment -->
+                <div class="form-group" ng-hide="!forID" ng-class="getCardStyle()">
+
+                    <input type="text"
+                           ng-model="FormAttachmentID"
+                           ng-disabled="!editMode"
+                           class="form-control"
+                           id="Note"/>
+                </div>
+
+
+
+                <div ng-hide="!attachMode" class="form-group">
+                    <!-- <button type="button" class="btn  btnCreate" ng-click="insertForms(SourceFileName, Note)">Upload</button>
+                    <span ng-hide = "!updateMode" ><button type="button" class="btn  btnCreate" ng-click="updateForms(FormAttachmentID, SourceFileName, Note, FilePath)">Edit</button></span> -->
+
+                    <input type="file" file-input="files"  />
+                    <button class="btn btnCreat" ng-click="insertForms(SourceFileName, Note)">Upload</button>
+                    <span ng-hide = "!updateMode" ><button type="button" class="btn  btnCreate" ng-click="updateForms(FormAttachmentID, SourceFileName, Note, FilePath)">Edit</button></span>
+                </div>
+
+                <div class="form-group" ng-hide="!attachMode" ng-class="getCardStyle()">
+                    <label for="Note">Note</label>
+                    <input type="text"
+                           ng-model="Note"
+                           class="form-control"
+                           id="Note"/>
+                </div>
+
+                <div class="form-group" ng-hide="!updateMode" ng-class="getCardStyle()">
+                    <label for="SourceFileName">SourceFileName</label>
+                    <input type="text"
+                           ng-model="SourceFileName"
+                           class="form-control"
+                           id="SourceFileName"/>
+                </div>
+
+                <!-- <div class="form-group" ng-hide="!updateMode" ng-hide="!attachMode" ng-class="getCardStyle()">
+                    <label for="FilePath">Path</label>
+                    <input type="text"
+                           ng-model="FilePath"                       
+                           class="form-control"
+                           id="FilePath"/>
+                </div> -->
+
+
+
+
+
+                <!-- <div class="btn btn-primary btn-sm float-left" ng-hide="!attachMode" >
+                
+                <input class="file-path validate" type="file" id="file" name="file" file-input="files" />
+                </div> -->
+
+
+                <div ng-hide = "!updateMode">
+                    <div ng-hide="!attachMode " class="form-group">
+
+                    </div></div>
+
+
+
+            </div>
+            <!-- Merge Field Part -->
+            <div class="col=2" id="formFieldsColumn">
+
+                <table class="table minerva-table bg-light table-hover">
+                    <thead>
+                    <tr><th>Merge Fields</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="field in formFields track by field.FormFieldID">
+                        <td>{{field.MergeField}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+
+</html>
